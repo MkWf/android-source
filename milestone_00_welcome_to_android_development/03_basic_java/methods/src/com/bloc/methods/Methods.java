@@ -32,7 +32,7 @@ public class Methods extends Object {
 		 ************************************************/
 
 		// You are free to modify the return statement
-		return false;
+		return !original;
 	}
 
 	/*
@@ -53,6 +53,9 @@ public class Methods extends Object {
 		/************************************************
 		 * Your work goes here
 		 ************************************************/
+		for(int i=0; i<numbers.length; i++) {
+			numbers[i] *= -1;
+		}
 	}
 
 
@@ -81,9 +84,16 @@ public class Methods extends Object {
 		/************************************************
 		 * Your work goes here
 		 ************************************************/
-
-		// You are free to modify the return statement
-		return new boolean [0];
+		boolean [] isFloorOrGreater = new boolean [someNumbers.length]; 
+		
+		for(int j=0; j<someNumbers.length; j++){
+			if(someNumbers[j] >= floor){
+				isFloorOrGreater[j] = true;
+			}else{
+				isFloorOrGreater[j] = false;
+			}
+		}
+		return isFloorOrGreater;
 	}
 
 	/*
@@ -106,9 +116,23 @@ public class Methods extends Object {
 		/************************************************
 		 * Your work goes here
 		 ************************************************/
-
-		// You are free to modify the return statement
-		return new int[2];
+		int min, max;
+		//Potential min/max value assigned to begin the search
+ 		min = max = someNumbers[0];
+		for(int k=1; k<someNumbers.length; k++){
+			
+			int someNum = someNumbers[k];
+			if(someNum < min){
+				min = someNum;
+			}else if(someNum > max){
+				max = someNum;
+			}
+			else{
+				//DO NOTHING: someNum is in between current min and max
+			}
+		}
+		int [] minMax = {min,max};
+		return minMax;
 	}
 
 
