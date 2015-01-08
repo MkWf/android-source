@@ -3,6 +3,8 @@ package com.bloc.classes;
 class Dog {
     // The length of hair which
     final float HAIR_CUT_LENGTH = 0.15f;
+    // Minimum hair length
+    final float MIN_HAIR = 0f;
     // Minimum weight that any Dog can be
     final float MIN_WEIGHT = 1.25f;
 	// Amount of weight to gain after eating
@@ -23,13 +25,18 @@ class Dog {
 	String mColor;
 
 	// ADD MEMBER VARIABLES HERE IF NECESSARY
-
+	// Meal tracker
+	int mMealCount = 0;
+	// Play tracker
+	int mPlayCount = 0;
 	/*
 	 * getHairLength
 	 * @return this Dog's hair length
 	 */
 	// ADD YOUR METHOD HERE, NAME MUST MATCH DESCRIPTION
-
+	float getHairLength(){
+		return mHairLength;
+	}
 	/*
 	 * setHairLength
 	 * Sets the length of the Dog's hair
@@ -37,13 +44,17 @@ class Dog {
 	 * @return nothing
 	 */
 	// ADD YOUR METHOD HERE, NAME MUST MATCH DESCRIPTION
-
+	void setHairLength(float hair){
+		mHairLength = hair;
+	}
 	/*
 	 * getGender
 	 * @return this Dog's gender
 	 */
 	// ADD YOUR METHOD HERE, NAME MUST MATCH DESCRIPTION
-
+	String getGender(){
+		return mGender;
+	}
 	/*
 	 * setGender
 	 * Sets this Dog's gender
@@ -51,13 +62,17 @@ class Dog {
 	 * @return nothing
 	 */
 	// ADD YOUR METHOD HERE, NAME MUST MATCH DESCRIPTION
-
+	void setGender(String gender){
+		mGender = gender;
+	}
 	/*
 	 * getSize
 	 * @return the size of the dog
 	 */
 	// ADD YOUR METHOD HERE, NAME MUST MATCH DESCRIPTION
-
+	String getSize(){
+		return mSize;
+	}
 	/*
 	 * setSize
 	 * Sets the size of the Dog
@@ -65,13 +80,17 @@ class Dog {
 	 * @return nothing
 	 */
 	// ADD YOUR METHOD HERE, NAME MUST MATCH DESCRIPTION
-
+	void setSize(String size){
+		mSize = size;
+	}
 	/*
 	 * getAge
 	 * @return this Dog's age
 	 */
 	// ADD YOUR METHOD HERE, NAME MUST MATCH DESCRIPTION
-
+	int getAge(){
+		return mAge;
+	}
 	/*
 	 * setAge
 	 * Sets the age of the Dog
@@ -79,13 +98,17 @@ class Dog {
 	 * @return nothing
 	 */
 	// ADD YOUR METHOD HERE, NAME MUST MATCH DESCRIPTION
-
+	void setAge(int age){
+		mAge = age;
+	}
 	/*
 	 * getWeight
 	 * @return this Dog's weight
 	 */
 	// ADD YOUR METHOD HERE, NAME MUST MATCH DESCRIPTION
-
+	float getWeight(){
+		return mWeight;
+	}
 	/*
 	 * setWeight
 	 * Sets the weight of the Dog
@@ -93,13 +116,17 @@ class Dog {
 	 * @return nothing
 	 */
 	// ADD YOUR METHOD HERE, NAME MUST MATCH DESCRIPTION
-
+	void setWeight(float weight){
+		mWeight = weight;
+	}
 	/*
 	 * getColor
 	 * @return this Dog's color
 	 */
 	// ADD YOUR METHOD HERE, NAME MUST MATCH DESCRIPTION
-
+	String getColor(){
+		return mColor;
+	}
 	/*
 	 * setColor
 	 * Sets the color of the Dog
@@ -107,7 +134,9 @@ class Dog {
 	 * @return nothing
 	 */
 	// ADD YOUR METHOD HERE, NAME MUST MATCH DESCRIPTION
-
+	void setColor(String color){
+		mColor = color;
+	}
 	/*
 	 * feed
 	 * Side-effect: 1. The Dog gains weight, specifically WEIGHT_GAIN
@@ -118,7 +147,20 @@ class Dog {
 	 * @return nothing
 	 */
 	// ADD YOUR METHOD HERE, NAME MUST MATCH DESCRIPTION
-
+	void feed(){
+		mWeight += WEIGHT_GAIN;
+		mMealCount++;
+		if(mMealCount == 3){
+			if(mSize == "tiny"){
+				mSize = "small";
+			}else if(mSize == "small"){
+				mSize = "average";
+			}else if(mSize == "average"){
+				mSize = "large";
+			}
+			mMealCount = 0;
+		}
+	}
 	/*
 	 * play
 	 * Side-effect: 1. The Dog loses weight, specifically WEIGHT_LOSS
@@ -130,7 +172,25 @@ class Dog {
 	 * @return nothing
 	 */
 	// ADD YOUR METHOD HERE, NAME MUST MATCH DESCRIPTION
+	void play(){
+		if((mWeight - WEIGHT_LOSS) <= MIN_WEIGHT){
+			mWeight = MIN_WEIGHT;
+		}else{
+			mWeight -= MIN_WEIGHT;
+		}
 
+		mPlayCount++;
+		if(mPlayCount == 6){
+			if(mSize == "large"){
+				mSize = "average";
+			}else if(mSize == "average"){
+				mSize = "small";
+			}else if(mSize == "small"){
+				mSize = "tiny";
+			}
+			mPlayCount = 0;
+		}
+	}
 	/*
 	 * cutHair
 	 * Side-effect: the Dog's hair length is reduced by HAIR_CUT_LENGTH
@@ -138,5 +198,11 @@ class Dog {
 	 * @return nothing
 	 */
 	// ADD YOUR METHOD HERE, NAME MUST MATCH DESCRIPTION
-
+	void cutHair(){
+		if((mHairLength - HAIR_CUT_LENGTH) <= MIN_HAIR){
+			mHairLength = MIN_HAIR;
+		}else{
+			mHairLength -= HAIR_CUT_LENGTH;
+		}
+	}
 }
