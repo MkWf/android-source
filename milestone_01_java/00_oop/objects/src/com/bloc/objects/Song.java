@@ -14,7 +14,11 @@ class Song extends Object {
 	 *				 and year of your choosing
 	 */
 	// CONSTRUCTOR CODE GOES HERE
-
+	Song(){
+		mEnsemble = new Ensemble(new Artist [] {new Artist("No", "Body"), new Artist("Some", "Body")});
+		mTitle = "No Title";
+		mYearReleased = 0;
+	}
 	/*
 	 * Partial Constructor
 	 * Side-effects: Sets the year of release to 0
@@ -22,7 +26,11 @@ class Song extends Object {
 	 * @param title the song title
 	 */
 	// CONSTRUCTOR CODE GOES HERE
-
+	Song(Ensemble ensemble, String title){
+		mEnsemble = ensemble;
+		mTitle = title;
+		mYearReleased = 0;
+	}
 	/*
 	 * Full Constructor
 	 * @param ensemble the ensemble responsible
@@ -30,4 +38,9 @@ class Song extends Object {
 	 * @param yearReleased the year the song was released
 	 */
 	// CONSTRUCTOR CODE GOES HERE
+	Song(Ensemble ensemble, String title, int yearReleased){
+		mEnsemble = ensemble;
+		mTitle = title;
+		mYearReleased = yearReleased;
+	}
 }
