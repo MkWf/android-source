@@ -23,9 +23,11 @@ public class FavoritePastries {
 	 * Use a HashMap to store the relationship
 	 * between rating and pastry
 	 */
+	private Map<Pastry, Integer> pastryRank;
 
 	public FavoritePastries() {
 		// WORK HERE
+		pastryRank = new HashMap<Pastry, Integer>();
 	}
 
 	/* 
@@ -43,6 +45,12 @@ public class FavoritePastries {
 	 */
 	public void addPastry(Pastry pastry, int rating) {
 		// WORK HERE
+		if(pastryRank.containsKey(pastry)){
+			pastryRank.remove(pastry);
+			pastryRank.put(pastry, rating);
+		}else{
+			pastryRank.put(pastry, rating);
+		}
 	}
 
 	/*
@@ -57,7 +65,12 @@ public class FavoritePastries {
 	 */
 	public boolean removePastry(Pastry pastry) {
 		// WORK HERE
-		return false;
+		if(pastryRank.containsKey(pastry)){
+			pastryRank.remove(pastry);
+			return true;
+		}else{
+			return false;
+		}
 	}
 
 	/*
@@ -74,7 +87,12 @@ public class FavoritePastries {
 	 */
 	public int getRatingForPastry(Pastry pastry) {
 		// WORK HERE
-		return -1;
+		if(pastryRank.containsKey(pastry)){
+			return pastryRank.get(pastry);
+		}else{
+			return -1;
+		}
+		
 	}
 
 	/*
@@ -93,7 +111,12 @@ public class FavoritePastries {
 	 */
 	public Collection<Pastry> getPastriesForRating(int rating) {
 		// WORK HERE
-		return null;
+		List<Pastry> pastryList = new ArrayList<Pastry>();
+		for(Pastry pastry : pastryRank.keySet()){
+			if(pastryRank.get(pastry).equals(rating)){
+				pastryList.add(pastry);
+			}
+		}
+		return pastryList;
 	}
-
 }
