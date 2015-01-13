@@ -7,40 +7,12 @@ import java.awt.image.BufferedImage;
 
 public class Main extends Object {
 
+	public static boolean exists = false;
 	public static void main(String [] args) {
 
 		// Extract content beneath to ImageGetter
 
-		try {
-			File existingImage = new File("google_logo.png");
-			if (existingImage.exists()) {
-				existingImage.delete();
-			}
-			URL url = new URL("https://www.google.com/images/srpr/logo11w.png");
-			BufferedImage bufferedImage = ImageIO.read(url);
-			File outputfile = new File("google_logo.png");
-			ImageIO.write(bufferedImage, "png", outputfile);
-			if ("/".equals(System.getProperties().getProperty("file.separator"))) {
-				Runtime.getRuntime().exec("open google_logo.png");
-			} else {
-				Runtime.getRuntime().exec("google_logo.png");
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-			System.exit(1);
-		} catch (Exception e) {
-			e.printStackTrace();
-			System.exit(1);
-		}
-
-		File logo = new File("google_logo.png");
-		boolean exists = false;
-		try {
-			exists = logo.exists();
-		} catch (Exception e) {
-			e.printStackTrace();
-			System.exit(1);
-		}
+		new ImageGetter().start();
 
 		// ^^^ Extract the above to ImageGetter
 
