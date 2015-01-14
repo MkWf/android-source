@@ -4,7 +4,33 @@
     android:layout_height="match_parent"
     android:padding="16dp">
 
-    <TextView
+    <io.bloc.android.blocly.ui.widget.RobotoTextView
+        style="@style/Headline"
+        android:id="@+id/tv_rss_item_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="New York Attacked By Giant Squid"/>
+
+    <io.bloc.android.blocly.ui.widget.RobotoTextView
+        style="@style/Caption"
+        android:id="@+id/tv_rss_item_feed_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tv_rss_item_title"
+        android:layout_marginTop="8dp"
+        android:text="New York Times"/>
+
+    <io.bloc.android.blocly.ui.widget.RobotoTextView
+        style="@style/Body1"
+        android:id="@+id/tv_rss_item_content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tv_rss_item_feed_title"
+        android:text="A giant squid appeared abruptly today in lower Manhattan. The squid appeared peaceful at first but violence quickly escalated after a tourist attempted to ha~"
+        android:layout_marginTop="8dp"/>
+
+
+   <!-- <TextView
         android:id="@+id/tv_rss_item_title"
         android:layout_centerHorizontal="true"
         android:layout_width="wrap_content"
@@ -34,5 +60,5 @@
         android:layout_toRightOf="@+id/tv_rss_item_feed_title"
         android:textSize="14sp"
         android:textColor="@color/text_primary"/>
-
+    -->
 </RelativeLayout>

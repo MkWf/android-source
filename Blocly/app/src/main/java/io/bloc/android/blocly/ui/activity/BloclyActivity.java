@@ -21,7 +21,6 @@ public class BloclyActivity extends Activity {
      /* TextView tv = (TextView) findViewById(R.id.hello);
       * tv.setText("Hello, universe!");
       */
-
      /*Toast.makeText(this,
       *    BloclyApplication.getSharedDataSource().getFeeds().get(0).getTitle(),
       *    Toast.LENGTH_LONG).show();
@@ -29,7 +28,7 @@ public class BloclyActivity extends Activity {
         itemAdapter = new ItemAdapter();
 
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.rv_activity_blocly);
-// #12
+
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(itemAdapter);
