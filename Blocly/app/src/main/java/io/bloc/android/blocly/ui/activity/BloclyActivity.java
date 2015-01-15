@@ -5,6 +5,9 @@ import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.widget.ImageView;
+
+import com.nostra13.universalimageloader.core.ImageLoader;
 
 import io.bloc.android.blocly.R;
 import io.bloc.android.blocly.ui.adapter.ItemAdapter;
@@ -26,6 +29,11 @@ public class BloclyActivity extends Activity {
       *    Toast.LENGTH_LONG).show();
       */
         itemAdapter = new ItemAdapter();
+
+
+        ImageView iv = (ImageView) findViewById(R.id.iv_background);
+        ImageLoader.getInstance().displayImage("https://www.petfinder.com/wp-content/uploads/2012/11/122163343-conditioning-dog-loud-noises-632x475.jpg", iv);
+
 
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.rv_activity_blocly);
 
