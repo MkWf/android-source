@@ -30,7 +30,6 @@ public class BloclyActivity extends Activity {
       */
         itemAdapter = new ItemAdapter();
 
-
         ImageView iv = (ImageView) findViewById(R.id.iv_background);
         ImageLoader.getInstance().displayImage("https://www.petfinder.com/wp-content/uploads/2012/11/122163343-conditioning-dog-loud-noises-632x475.jpg", iv);
 
