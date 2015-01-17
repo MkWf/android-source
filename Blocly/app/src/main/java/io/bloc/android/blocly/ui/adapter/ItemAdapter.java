@@ -109,6 +109,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemAdapterVie
         @Override
         public void onClick(View view) {
             Toast.makeText(view.getContext(), rssItem.getTitle(), Toast.LENGTH_SHORT).show();
+            view.setBackgroundColor(view.getResources().getColor(R.color.black_26));
         }
     }
 }
