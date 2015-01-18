@@ -11,6 +11,10 @@
 
     <style name="DrawerArrow" parent="Base.Widget.AppCompat.DrawerArrowToggle">
         <item name="color">@color/actionBarItems</item>
+        <item name="thickness">4dp</item>
+        <item name="barSize">24dp</item>
+        <item name="middleBarArrowSize">32dp</item>
+        <item name="drawableSize">24dp</item>
     </style>
 
     <style name="BlocFont">
