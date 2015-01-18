@@ -10,6 +10,8 @@
         <item name="android:colorAccent">@color/accent</item>
         <!-- Window Background -->
         <item name="android:windowBackground">@color/windowBackground</item>
+        <!-- DrawerArrowStyle -->
+        <item name="drawerArrowStyle">@style/DrawerArrow</item>
     </style>
 
     <style name="BlocFont">

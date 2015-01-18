@@ -5,6 +5,12 @@
         <!-- Customize your theme here. -->
         <!-- Window Background -->
         <item name="android:windowBackground">@color/windowBackground</item>
+        <!-- DrawerArrowStyle -->
+        <item name="drawerArrowStyle">@style/DrawerArrow</item>
+    </style>
+
+    <style name="DrawerArrow" parent="Base.Widget.AppCompat.DrawerArrowToggle">
+        <item name="color">@color/actionBarItems</item>
     </style>
 
     <style name="BlocFont">
