@@ -16,5 +16,8 @@
     <color name="black_54">#79000000</color>
     <color name="black_26">#3A000000</color>
     <color name="black_12">#1B000000</color>
+    <color name="red_54">#79FF0000</color>
+    <color name="green_54">#7900FF00</color>
     <color name="green">#00FF00</color>
+    <color name="transparent">#00000000</color>
 </resources>
