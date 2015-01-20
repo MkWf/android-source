@@ -24,6 +24,7 @@ public class BloclyApplication extends Application {
         return BloclyApplication.getSharedInstance().getDataSource();
     }
 
+
     private static BloclyApplication sharedInstance;
     private DataSource dataSource;
 

@@ -9,6 +9,8 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Toast;
 
 import io.bloc.android.blocly.R;
 import io.bloc.android.blocly.ui.adapter.ItemAdapter;
@@ -18,7 +20,6 @@ public class BloclyActivity extends Activity {
 
     private ItemAdapter itemAdapter;
 
-    //ALT+ENTER to import v7 for ActionBarDrawerToggle
     private ActionBarDrawerToggle drawerToggle;
     private DrawerLayout drawerLayout;
     private NavigationDrawerAdapter navigationDrawerAdapter;
@@ -28,13 +29,6 @@ public class BloclyActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_blocly);
 
-     /* TextView tv = (TextView) findViewById(R.id.hello);
-      * tv.setText("Hello, universe!");
-      */
-     /*Toast.makeText(this,
-      *    BloclyApplication.getSharedDataSource().getFeeds().get(0).getTitle(),
-      *    Toast.LENGTH_LONG).show();
-      */
         itemAdapter = new ItemAdapter();
 
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.rv_activity_blocly);
@@ -73,6 +67,10 @@ public class BloclyActivity extends Activity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    public void onClick(View v) {
+        Toast.makeText(v.getContext(), "Nothing… yet!", Toast.LENGTH_SHORT).show();
     }
 
 }
