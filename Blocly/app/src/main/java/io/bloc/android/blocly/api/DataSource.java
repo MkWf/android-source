@@ -39,7 +39,7 @@ public class DataSource {
                     BloclyApplication.getSharedInstance().getString(R.string.placeholder_headline) + " " + i,
                     BloclyApplication.getSharedInstance().getString(R.string.placeholder_content),
                     "http://favoritefeed.net?story_id=an-incredible-news-story",
-                    "http://rs1img.memecdn.com/silly-dog_o_511213.jpg",
+                    "http://rs1img.memecdn.com/silly-dog_o_511213123.jpg",
                     0, System.currentTimeMillis(), false, false));
         }
     }
