@@ -130,9 +130,6 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemAdapterVie
         @Override
         public void onClick(View view) {
             if (view == itemView) {
-                //contentExpanded = !contentExpanded;
-                //expandedContentWrapper.setVisibility(contentExpanded ? View.VISIBLE : View.GONE);
-                //content.setVisibility(contentExpanded ? View.GONE : View.VISIBLE);
                 animateContent(!contentExpanded);
             } else {
                 Toast.makeText(view.getContext(), "Visit " + rssItem.getUrl(), Toast.LENGTH_SHORT).show();
@@ -151,19 +148,15 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemAdapterVie
           */
 
         private void animateContent(final boolean expand) {
-// #1
             if ((expand && contentExpanded) || (!expand && !contentExpanded)) {
                 return;
             }
-// #2
             int startingHeight = expandedContentWrapper.getMeasuredHeight();
             int finalHeight = content.getMeasuredHeight();
             if (expand) {
-// #3
                 startingHeight = finalHeight;
                 expandedContentWrapper.setAlpha(0f);
                 expandedContentWrapper.setVisibility(View.VISIBLE);
-// #4
                 expandedContentWrapper.measure(
                         View.MeasureSpec.makeMeasureSpec(content.getWidth(), View.MeasureSpec.EXACTLY),
                         ViewGroup.LayoutParams.WRAP_CONTENT
@@ -175,18 +168,15 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemAdapterVie
             startAnimator(startingHeight, finalHeight, new ValueAnimator.AnimatorUpdateListener() {
                 @Override
                 public void onAnimationUpdate(ValueAnimator valueAnimator) {
-// #5
                     float animatedFraction = valueAnimator.getAnimatedFraction();
                     float wrapperAlpha = expand ? animatedFraction : 1f - animatedFraction;
                     float contentAlpha = 1f - wrapperAlpha;
 
                     expandedContentWrapper.setAlpha(wrapperAlpha);
                     content.setAlpha(contentAlpha);
-// #6
                     expandedContentWrapper.getLayoutParams().height = animatedFraction == 1f ?
                             ViewGroup.LayoutParams.WRAP_CONTENT :
                             (Integer) valueAnimator.getAnimatedValue();
-// #7
                     expandedContentWrapper.requestLayout();
                     if (animatedFraction == 1f) {
                         if (expand) {
@@ -203,9 +193,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemAdapterVie
         private void startAnimator(int start, int end, ValueAnimator.AnimatorUpdateListener animatorUpdateListener) {
             ValueAnimator valueAnimator = ValueAnimator.ofInt(start, end);
             valueAnimator.addUpdateListener(animatorUpdateListener);
-// #8
             valueAnimator.setDuration(itemView.getResources().getInteger(android.R.integer.config_mediumAnimTime));
-// #9
             valueAnimator.setInterpolator(new AccelerateDecelerateInterpolator());
             valueAnimator.start();
         }

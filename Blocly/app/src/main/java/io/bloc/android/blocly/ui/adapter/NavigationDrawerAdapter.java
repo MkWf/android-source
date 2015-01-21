@@ -24,12 +24,6 @@ public class NavigationDrawerAdapter extends RecyclerView.Adapter<NavigationDraw
     }
 
 
-    /*
-    public NavigationDrawerAdapter(Context c){
-        NavigationDrawerAdapter();
-
-    }*/
-
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int position) {
         View inflate = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.navigation_item, viewGroup, false);
