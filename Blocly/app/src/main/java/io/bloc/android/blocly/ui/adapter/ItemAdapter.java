@@ -146,7 +146,6 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemAdapterVie
                 headerWrapper.setVisibility(View.GONE);
             }
             animateContent(getExpandedItem() == rssItem);
-
         }
 
         /*
