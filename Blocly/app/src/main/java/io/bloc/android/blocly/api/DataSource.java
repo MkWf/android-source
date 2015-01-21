@@ -35,12 +35,21 @@ public class DataSource {
                 "This feed is just incredible, I can't even begin to tell you…",
                 "http://favoritefeed.net", "http://feeds.feedburner.com/favorite_feed?format=xml"));
         for (int i = 0; i < 10; i++) {
-            items.add(new RssItem(String.valueOf(i),
-                    BloclyApplication.getSharedInstance().getString(R.string.placeholder_headline) + " " + i,
-                    BloclyApplication.getSharedInstance().getString(R.string.placeholder_content),
-                    "http://favoritefeed.net?story_id=an-incredible-news-story",
-                    "http://rs1img.memecdn.com/silly-dog_o_511213123.jpg",
-                    0, System.currentTimeMillis(), false, false));
+            if(i % 2 == 0) {
+                items.add(new RssItem(String.valueOf(i),
+                        BloclyApplication.getSharedInstance().getString(R.string.placeholder_headline) + " " + i,
+                        BloclyApplication.getSharedInstance().getString(R.string.placeholder_content),
+                        "http://favoritefeed.net?story_id=an-incredible-news-story",
+                        "http://rs1img.memecdn.com/silly-dog_o_511213.jpg",
+                        0, System.currentTimeMillis(), false, false));
+            }else{
+                items.add(new RssItem(String.valueOf(i),
+                        BloclyApplication.getSharedInstance().getString(R.string.placeholder_headline) + " " + i,
+                        BloclyApplication.getSharedInstance().getString(R.string.placeholder_content),
+                        "http://favoritefeed.net?story_id=an-incredible-news-story",
+                        "nourl.jpg",
+                        0, System.currentTimeMillis(), false, false));
+            }
         }
     }
 }

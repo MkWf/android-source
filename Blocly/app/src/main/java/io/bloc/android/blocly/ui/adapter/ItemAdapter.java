@@ -109,16 +109,13 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemAdapterVie
         public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
             Log.e(TAG, "onLoadingFailed: " + failReason.toString() + " for URL: " + imageUri);
             shrinkContent();
-            //shrinkContent();
         }
 
         @Override
         public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
             if (imageUri.equals(rssItem.getImageUrl())) {
-                //expandContent();
                 headerImage.setImageBitmap(loadedImage);
                 headerImage.setVisibility(View.VISIBLE);
-
             }
         }
 
@@ -135,8 +132,6 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemAdapterVie
         public void onClick(View view) {
             if (view == itemView) {;
                 animateContent(!contentExpanded);
-                expandContent();
-
             } else {
                 Toast.makeText(view.getContext(), "Visit " + rssItem.getUrl(), Toast.LENGTH_SHORT).show();
             }
@@ -202,24 +197,6 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemAdapterVie
             valueAnimator.setDuration(itemView.getResources().getInteger(android.R.integer.config_mediumAnimTime));
             valueAnimator.setInterpolator(new AccelerateDecelerateInterpolator());
             valueAnimator.start();
-        }
-
-        private void expandContent() {
-            int startingHeight = headerWrapper.getMeasuredHeight();
-            int finalHeight = startingHeight + 200;
-
-            startAnimator(startingHeight, finalHeight, new ValueAnimator.AnimatorUpdateListener() {
-                @Override
-                public void onAnimationUpdate(ValueAnimator valueAnimator) {
-
-                    float animatedFraction = valueAnimator.getAnimatedFraction();
-
-                    headerWrapper.getLayoutParams().height = animatedFraction == 1f ?
-                            ViewGroup.LayoutParams.WRAP_CONTENT :
-                            (Integer) valueAnimator.getAnimatedValue();
-                    headerWrapper.requestLayout();
-                }
-            });
         }
 
         private void shrinkContent() {
