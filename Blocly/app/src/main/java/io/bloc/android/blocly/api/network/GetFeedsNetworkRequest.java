@@ -1,24 +1,20 @@
 package io.bloc.android.blocly.api.network;
 
 import org.w3c.dom.Document;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
+import io.bloc.android.blocly.BloclyApplication;
+import io.bloc.android.blocly.api.model.RssFeed;
+import io.bloc.android.blocly.api.model.RssItem;
 
 /**
  * Created by Mark on 1/19/2015.
  */
-public class GetFeedsNetworkRequest extends NetworkRequest<List<GetFeedsNetworkRequest.FeedResponse>> {
+public class GetFeedsNetworkRequest extends NetworkRequest<List<RssFeed>> {
 
     public static final int ERROR_PARSING = 3;
 
@@ -39,70 +35,35 @@ public class GetFeedsNetworkRequest extends NetworkRequest<List<GetFeedsNetworkR
     }
 
     @Override
-    public List<FeedResponse> performRequest() {
-        List<FeedResponse> responseFeeds = new ArrayList<FeedResponse>(feedUrls.length);
+    public List<RssFeed> performRequest() {
+        List<RssFeed> responseFeeds = new ArrayList<RssFeed>(feedUrls.length);
         for (String feedUrlString : feedUrls) {
             InputStream inputStream = openStream(feedUrlString);
             if (inputStream == null) {
                 return null;
             }
             try {
-                DocumentBuilder documentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-                Document xmlDocument = documentBuilder.parse(inputStream);
+                String channelTitle = BloclyApplication.getSharedDataSource().getFeeds().get(0).getTitle();
+                String channelDescription = BloclyApplication.getSharedDataSource().getFeeds().get(0).getDescription();
+                String channelURL = BloclyApplication.getSharedDataSource().getFeeds().get(0).getFeedUrl();
 
-                String channelTitle = optFirstTagFromDocument(xmlDocument, XML_TAG_TITLE);
-                String channelDescription = optFirstTagFromDocument(xmlDocument, XML_TAG_DESCRIPTION);
-                String channelURL = optFirstTagFromDocument(xmlDocument, XML_TAG_LINK);
+                int dataItemSize = BloclyApplication.getSharedDataSource().getItems().size();
+                List<RssItem> responseItems = new ArrayList<RssItem>(dataItemSize);
+                for (int itemIndex = 0; itemIndex < dataItemSize; itemIndex++) {
+                    String itemGUID = BloclyApplication.getSharedDataSource().getItems().get(itemIndex).getGuid();
+                    String itemTitle = BloclyApplication.getSharedDataSource().getItems().get(itemIndex).getTitle();
+                    String itemDescription = BloclyApplication.getSharedDataSource().getItems().get(itemIndex).getDescription();
+                    String itemURL = BloclyApplication.getSharedDataSource().getItems().get(itemIndex).getUrl();
+                    String imageURL = BloclyApplication.getSharedDataSource().getItems().get(itemIndex).getImageUrl();
+                    Long itemPubDate = BloclyApplication.getSharedDataSource().getItems().get(itemIndex).getDatePublished();
+                    Long rssFeedId = BloclyApplication.getSharedDataSource().getItems().get(itemIndex).getRssFeedId();
 
-                NodeList allItemNodes = xmlDocument.getElementsByTagName(XML_TAG_ITEM);
-                List<ItemResponse> responseItems = new ArrayList<ItemResponse>(allItemNodes.getLength());
-                for (int itemIndex = 0; itemIndex < allItemNodes.getLength(); itemIndex++) {
-                    String itemURL = null;
-                    String itemTitle = null;
-                    String itemDescription = null;
-                    String itemGUID = null;
-                    String itemPubDate = null;
-                    String itemEnclosureURL = null;
-                    String itemEnclosureMIMEType = null;
-
-                    // #8
-                    Node itemNode = allItemNodes.item(itemIndex);
-                    NodeList tagNodes = itemNode.getChildNodes();
-                    for (int tagIndex = 0; tagIndex < tagNodes.getLength(); tagIndex++) {
-                        Node tagNode = tagNodes.item(tagIndex);
-                        String tag = tagNode.getNodeName();
-                        if (XML_TAG_LINK.equalsIgnoreCase(tag)) {
-                            itemURL = tagNode.getTextContent();
-                        } else if (XML_TAG_TITLE.equalsIgnoreCase(tag)) {
-                            itemTitle = tagNode.getTextContent();
-                        } else if (XML_TAG_DESCRIPTION.equalsIgnoreCase(tag)) {
-                            itemDescription = tagNode.getTextContent();
-                        } else if (XML_TAG_ENCLOSURE.equalsIgnoreCase(tag)) {
-                            NamedNodeMap enclosureAttributes = tagNode.getAttributes();
-                            itemEnclosureURL = enclosureAttributes.getNamedItem(XML_ATTRIBUTE_URL).getTextContent();
-                            itemEnclosureMIMEType = enclosureAttributes.getNamedItem(XML_ATTRIBUTE_TYPE).getTextContent();
-                        } else if (XML_TAG_PUB_DATE.equalsIgnoreCase(tag)) {
-                            itemPubDate = tagNode.getTextContent();
-                        } else if (XML_TAG_GUID.equalsIgnoreCase(tag)) {
-                            itemGUID = tagNode.getTextContent();
-                        }
-                    }
-
-                    responseItems.add(new ItemResponse(itemURL, itemTitle, itemDescription,
-                            itemGUID, itemPubDate, itemEnclosureURL, itemEnclosureMIMEType));
+                    responseItems.add(new RssItem(itemGUID, itemTitle, itemDescription,
+                            itemURL, imageURL, rssFeedId, itemPubDate, false, false));
                 }
-            }catch (IOException e) {
+
+            }catch(Exception e){
                 e.printStackTrace();
-                setErrorCode(ERROR_IO);
-                return null;
-            }catch (SAXException e) {
-                e.printStackTrace();
-                setErrorCode(ERROR_PARSING);
-                return null;
-            }catch (ParserConfigurationException e) {
-                e.printStackTrace();
-                setErrorCode(ERROR_PARSING);
-                return null;
             }
         }
         return responseFeeds;
