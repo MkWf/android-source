@@ -1,6 +1,7 @@
 package io.bloc.android.blocly.ui.activity;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -146,13 +147,28 @@ public class BloclyActivity extends Activity implements
         if (drawerToggle.onOptionsItemSelected(item)) {
             return true;
         }
-        Toast.makeText(this, item.getTitle(), Toast.LENGTH_SHORT).show();
+
+        if(item.getItemId() == R.id.action_share){
+            RssItem shareItem = itemAdapter.getExpandedItem();
+            if (shareItem == null) {
+                return false;
+            }
+            Intent shareIntent = new Intent(Intent.ACTION_SEND);
+            shareIntent.putExtra(Intent.EXTRA_TEXT, String.format("%s (%s)", shareItem.getTitle(), shareItem.getUrl()));
+            shareIntent.setType("text/plain");
+            Intent chooser = Intent.createChooser(shareIntent,getString(R.string.shareIntent));
+            startActivity(chooser);
+        }else{
+            Toast.makeText(this, item.getTitle(), Toast.LENGTH_SHORT).show();
+        }
         return super.onOptionsItemSelected(item);
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.blocly, menu);
+        MenuItem share = menu.findItem(R.id.action_share);
+        share.setVisible(false);
         this.menu = menu;
         return super.onCreateOptionsMenu(menu);
     }
@@ -216,9 +232,13 @@ public class BloclyActivity extends Activity implements
         }
         if (positionToContract > -1) {
             itemAdapter.notifyItemChanged(positionToContract);
+            MenuItem share = menu.findItem(R.id.action_share);
+            share.setVisible(false);
         }
         if (positionToExpand > -1) {
             itemAdapter.notifyItemChanged(positionToExpand);
+            MenuItem share = menu.findItem(R.id.action_share);
+            share.setVisible(true);
         }else {
             return;
         }
@@ -229,7 +249,6 @@ public class BloclyActivity extends Activity implements
         }
 
         View viewToExpand = recyclerView.getLayoutManager().findViewByPosition(positionToExpand);
-
         recyclerView.smoothScrollBy(0, viewToExpand.getTop() - lessToScroll);
     }
 
