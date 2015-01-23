@@ -21,13 +21,6 @@ public class BloclyActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_blocly);
 
-     /* TextView tv = (TextView) findViewById(R.id.hello);
-      * tv.setText("Hello, universe!");
-      */
-     /*Toast.makeText(this,
-      *    BloclyApplication.getSharedDataSource().getFeeds().get(0).getTitle(),
-      *    Toast.LENGTH_LONG).show();
-      */
         itemAdapter = new ItemAdapter();
 
         ImageView iv = (ImageView) findViewById(R.id.iv_background);
