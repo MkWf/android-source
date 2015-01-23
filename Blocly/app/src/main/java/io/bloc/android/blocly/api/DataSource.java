@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import io.bloc.android.blocly.BloclyApplication;
+import io.bloc.android.blocly.BuildConfig;
 import io.bloc.android.blocly.R;
 import io.bloc.android.blocly.api.model.RssFeed;
 import io.bloc.android.blocly.api.model.RssItem;
