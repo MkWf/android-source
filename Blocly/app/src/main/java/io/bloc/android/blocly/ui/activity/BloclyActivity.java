@@ -1,17 +1,20 @@
 package io.bloc.android.blocly.ui.activity;
 
 import android.animation.ValueAnimator;
-import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.content.res.Configuration;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -19,6 +22,7 @@ import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import io.bloc.android.blocly.BloclyApplication;
 import io.bloc.android.blocly.R;
@@ -27,13 +31,15 @@ import io.bloc.android.blocly.api.model.RssItem;
 import io.bloc.android.blocly.ui.adapter.ItemAdapter;
 import io.bloc.android.blocly.ui.adapter.NavigationDrawerAdapter;
 
-public class BloclyActivity extends Activity implements
+public class BloclyActivity extends ActionBarActivity implements
         NavigationDrawerAdapter.NavigationDrawerAdapterDelegate,
         ItemAdapter.DataSource,
         ItemAdapter.Delegate {
 
     private RecyclerView recyclerView;
     private ItemAdapter itemAdapter;
+
+    private static String TAG = BloclyActivity.class.getSimpleName();
 
     //ALT+ENTER to import v7 for ActionBarDrawerToggle
     private ActionBarDrawerToggle drawerToggle;
@@ -57,7 +63,7 @@ public class BloclyActivity extends Activity implements
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(itemAdapter);
 
-        getActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         drawerLayout = (DrawerLayout) findViewById(R.id.dl_activity_blocly);
         drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, 0, 0) {
 
@@ -139,6 +145,28 @@ public class BloclyActivity extends Activity implements
         navigationRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         navigationRecyclerView.setItemAnimator(new DefaultItemAnimator());
         navigationRecyclerView.setAdapter(navigationDrawerAdapter);
+
+        Intent webIntent = new Intent(Intent.ACTION_VIEW);
+        Intent phoneIntent = new Intent(Intent.ACTION_DIAL);
+        Intent mailIntent = new Intent(Intent.ACTION_SEND);
+        mailIntent.setType("text/plain");
+
+        List<ResolveInfo> webIntentList = getPackageManager().queryIntentActivities(webIntent, PackageManager.GET_RESOLVED_FILTER);
+        List<ResolveInfo> phoneIntentList = getPackageManager().queryIntentActivities(phoneIntent, PackageManager.GET_RESOLVED_FILTER);
+        List<ResolveInfo> mailIntentList = getPackageManager().queryIntentActivities(mailIntent, PackageManager.GET_RESOLVED_FILTER);
+
+        for(ResolveInfo intents : webIntentList){
+            String name = intents.activityInfo.applicationInfo.loadLabel(getPackageManager()).toString();
+            Log.i(TAG, "Web Name: " + name);
+        }
+        for(ResolveInfo intents : phoneIntentList){
+            String name = intents.activityInfo.applicationInfo.loadLabel(getPackageManager()).toString();
+            Log.i(TAG, "Phone Name: " + name);
+        }
+        for(ResolveInfo intents : mailIntentList){
+            String name = intents.activityInfo.applicationInfo.loadLabel(getPackageManager()).toString();
+            Log.i(TAG, "Mail Name: " + name);
+        }
     }
 
     @Override
@@ -163,12 +191,14 @@ public class BloclyActivity extends Activity implements
             if (itemToShare == null) {
                 return false;
             }
+
             Intent shareIntent = new Intent(Intent.ACTION_SEND);
             shareIntent.putExtra(Intent.EXTRA_TEXT,
                     String.format("%s (%s)", itemToShare.getTitle(), itemToShare.getUrl()));
             shareIntent.setType("text/plain");
             Intent chooser = Intent.createChooser(shareIntent, getString(R.string.share_chooser_title));
             startActivity(chooser);
+
         } else {
             Toast.makeText(this, item.getTitle(), Toast.LENGTH_SHORT).show();
         }
