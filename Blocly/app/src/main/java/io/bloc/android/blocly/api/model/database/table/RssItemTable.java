@@ -25,7 +25,7 @@ public class RssItemTable extends Table {
     public String getCreateStatement() {
         return "CREATE TABLE " + getName() + " ("
                 + COLUMN_ID + " INTEGER PRIMARY KEY,"
-                + COLUMN_LINK + " TEXT,"
+                + COLUMN_LINK + " TEXT UNIQUE,"
                 + COLUMN_TITLE + " TEXT,"
                 + COLUMN_DESCRIPTION + " TEXT,"
                 + COLUMN_GUID + " TEXT,"
@@ -35,5 +35,45 @@ public class RssItemTable extends Table {
                 + COLUMN_RSS_FEED + " INTEGER,"
                 + COLUMN_FAVORITE + " INTEGER DEFAULT 0,"
                 + COLUMN_ARCHIVED + " INTEGER DEFAULT 0)";
+    }
+
+    public String getColumnArchived() {
+        return COLUMN_ARCHIVED;
+    }
+
+    public String getColumnLink() {
+        return COLUMN_LINK;
+    }
+
+    public String getColumnTitle() {
+        return COLUMN_TITLE;
+    }
+
+    public String getColumnDescription() {
+        return COLUMN_DESCRIPTION;
+    }
+
+    public String getColumnGuid() {
+        return COLUMN_GUID;
+    }
+
+    public String getColumnPubDate() {
+        return COLUMN_PUB_DATE;
+    }
+
+    public String getColumnEnclosure() {
+        return COLUMN_ENCLOSURE;
+    }
+
+    public String getColumnMimeType() {
+        return COLUMN_MIME_TYPE;
+    }
+
+    public String getColumnRssFeed() {
+        return COLUMN_RSS_FEED;
+    }
+
+    public String getColumnFavorite() {
+        return COLUMN_FAVORITE;
     }
 }

@@ -1,5 +1,6 @@
 package io.bloc.android.blocly.api;
 
+import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
 
 import java.util.ArrayList;
@@ -42,7 +43,34 @@ public class DataSource {
                     BloclyApplication.getSharedInstance().deleteDatabase("blocly_db");
                 }
                 SQLiteDatabase writableDatabase = databaseOpenHelper.getWritableDatabase();
-                new GetFeedsNetworkRequest("http://feeds.feedburner.com/androidcentral?format=xml").performRequest();
+
+                if(writableDatabase.isOpen()){
+                    List<GetFeedsNetworkRequest.FeedResponse> feedData = new GetFeedsNetworkRequest("http://feeds.feedburner.com/androidcentral?format=xml").performRequest();
+                    for (int feed = 0; feed < feedData.size(); feed++) {
+                        ContentValues feedValues = new ContentValues();
+                        feedValues.put(rssFeedTable.getLink(), feedData.get(feed).channelURL);
+                        feedValues.put(rssFeedTable.getTitle(), feedData.get(feed).channelTitle);
+                        feedValues.put(rssFeedTable.getDescription(), feedData.get(feed).channelDescription);
+                        feedValues.put(rssFeedTable.getFeedUrl(), feedData.get(feed).channelFeedURL);
+
+                        writableDatabase.insert(rssFeedTable.getName(), null, feedValues);
+
+                        for(int item = 0; item < feedData.get(feed).channelItems.size(); item++){
+                            ContentValues itemValues = new ContentValues();
+                            itemValues.put(rssItemTable.getColumnLink(), feedData.get(feed).channelItems.get(item).itemURL);
+                            itemValues.put(rssItemTable.getColumnTitle(), feedData.get(feed).channelItems.get(item).itemTitle);
+                            itemValues.put(rssItemTable.getColumnDescription(), feedData.get(feed).channelItems.get(item).itemDescription);
+                            itemValues.put(rssItemTable.getColumnGuid(), feedData.get(feed).channelItems.get(item).itemGUID);
+                            itemValues.put(rssItemTable.getColumnPubDate(), feedData.get(feed).channelItems.get(item).itemPubDate);
+                            itemValues.put(rssItemTable.getColumnEnclosure(), feedData.get(feed).channelItems.get(item).itemEnclosureURL);
+                            itemValues.put(rssItemTable.getColumnMimeType(), feedData.get(feed).channelItems.get(item).itemEnclosureMIMEType);
+                            itemValues.put(rssItemTable.getColumnRssFeed(), feed);
+
+                            writableDatabase.insert(rssItemTable.getName(), null, itemValues);
+                        }
+                    }
+                    writableDatabase.close();
+                }
             }
         }).start();
     }
