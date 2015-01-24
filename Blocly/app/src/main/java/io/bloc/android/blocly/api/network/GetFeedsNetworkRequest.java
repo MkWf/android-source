@@ -41,6 +41,7 @@ public class GetFeedsNetworkRequest extends NetworkRequest<List<GetFeedsNetworkR
     @Override
     public List<FeedResponse> performRequest() {
         List<FeedResponse> responseFeeds = new ArrayList<FeedResponse>(feedUrls.length);
+        int feedCount = 0;
         for (String feedUrlString : feedUrls) {
             InputStream inputStream = openStream(feedUrlString);
             if (inputStream == null) {
@@ -65,7 +66,6 @@ public class GetFeedsNetworkRequest extends NetworkRequest<List<GetFeedsNetworkR
                     String itemEnclosureURL = null;
                     String itemEnclosureMIMEType = null;
 
-                    // #8
                     Node itemNode = allItemNodes.item(itemIndex);
                     NodeList tagNodes = itemNode.getChildNodes();
                     for (int tagIndex = 0; tagIndex < tagNodes.getLength(); tagIndex++) {
@@ -91,6 +91,9 @@ public class GetFeedsNetworkRequest extends NetworkRequest<List<GetFeedsNetworkR
                     responseItems.add(new ItemResponse(itemURL, itemTitle, itemDescription,
                             itemGUID, itemPubDate, itemEnclosureURL, itemEnclosureMIMEType));
                 }
+                responseFeeds.add(new FeedResponse(feedUrls[feedCount], channelTitle, channelURL,
+                        channelDescription, responseItems));
+                feedCount++;
             }catch (IOException e) {
                 e.printStackTrace();
                 setErrorCode(ERROR_IO);
