@@ -19,7 +19,6 @@ import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
 
 import java.lang.ref.WeakReference;
 
-import io.bloc.android.blocly.BloclyApplication;
 import io.bloc.android.blocly.R;
 import io.bloc.android.blocly.api.model.RssFeed;
 import io.bloc.android.blocly.api.model.RssItem;
@@ -65,7 +64,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemAdapterVie
 
     @Override
     public int getItemCount() {
-        return BloclyApplication.getSharedDataSource().getItems().size();
+        return getDataSource().getItemCount(this);
     }
 
     public DataSource getDataSource() {
