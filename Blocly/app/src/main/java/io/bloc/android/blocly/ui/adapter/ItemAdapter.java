@@ -64,6 +64,9 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemAdapterVie
 
     @Override
     public int getItemCount() {
+        if (getDataSource() == null) {
+            return 0;
+        }
         return getDataSource().getItemCount(this);
     }
 
