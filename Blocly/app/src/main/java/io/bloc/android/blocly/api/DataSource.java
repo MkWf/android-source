@@ -8,6 +8,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.Semaphore;
 
 import io.bloc.android.blocly.BloclyApplication;
 import io.bloc.android.blocly.BuildConfig;
@@ -29,6 +30,8 @@ public class DataSource {
     private RssItemTable rssItemTable;
     private List<RssFeed> feeds;
     private List<RssItem> items;
+    public int threadTiming;
+    public Semaphore s = new Semaphore(1);
 
     public DataSource() {
         rssFeedTable = new RssFeedTable();
@@ -38,6 +41,12 @@ public class DataSource {
         feeds = new ArrayList<RssFeed>();
         items = new ArrayList<RssItem>();
         createFakeData();
+
+        try {
+            s.acquire();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
         new Thread(new Runnable() {
             @Override
@@ -73,6 +82,7 @@ public class DataSource {
                             .setPubDate(itemPubDate)
                             .setRSSFeed(androidCentralFeedId)
                             .insert(writableDatabase);
+                    s.release();
                 }
             }
         }).start();

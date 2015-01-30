@@ -4,6 +4,8 @@ import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -24,6 +26,8 @@ import io.bloc.android.blocly.BloclyApplication;
 import io.bloc.android.blocly.R;
 import io.bloc.android.blocly.api.model.RssFeed;
 import io.bloc.android.blocly.api.model.RssItem;
+import io.bloc.android.blocly.api.model.database.DatabaseOpenHelper;
+import io.bloc.android.blocly.api.model.database.table.RssItemTable;
 import io.bloc.android.blocly.ui.adapter.ItemAdapter;
 import io.bloc.android.blocly.ui.adapter.NavigationDrawerAdapter;
 
@@ -139,6 +143,24 @@ public class BloclyActivity extends Activity implements
         navigationRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         navigationRecyclerView.setItemAnimator(new DefaultItemAnimator());
         navigationRecyclerView.setAdapter(navigationDrawerAdapter);
+
+        try {
+            BloclyApplication.getSharedDataSource().s.acquire();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                RssItemTable itemTable = new RssItemTable();
+                DatabaseOpenHelper databaseOpenHelper = new DatabaseOpenHelper(BloclyApplication.getSharedInstance(), itemTable);
+                SQLiteDatabase readableDatabase = databaseOpenHelper.getReadableDatabase();
+
+                Cursor items = readableDatabase.query(false, "rss_items", null, null, null, null, null, "pub_date DESC", "10");
+            }
+        }).start();
+        BloclyApplication.getSharedDataSource().s.release();
     }
 
     @Override
