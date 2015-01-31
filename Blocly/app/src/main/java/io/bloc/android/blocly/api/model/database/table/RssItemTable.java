@@ -127,4 +127,34 @@ public class RssItemTable extends Table {
                 + COLUMN_FAVORITE + " INTEGER DEFAULT 0,"
                 + COLUMN_ARCHIVED + " INTEGER DEFAULT 0)";
     }
+
+    public Cursor fetchArchived(SQLiteDatabase readonlyDatabase) {
+        return readonlyDatabase.query(true, getName(), null, COLUMN_ARCHIVED + " = ?",
+                new String[] {String.valueOf("1")}, null, null, null, null);
+    }
+
+    public Cursor fetchArchived(SQLiteDatabase readonlyDatabase, int feedId) {
+        return readonlyDatabase.query(true, getName(), null, COLUMN_ARCHIVED + " = ? OR " + COLUMN_ID + " = ?",
+                new String[] {String.valueOf("1"), String.valueOf("feedId")}, null, null, null, null);
+    }
+
+    public Cursor fetchFavorited(SQLiteDatabase readonlyDatabase) {
+        return readonlyDatabase.query(true, getName(), null, COLUMN_FAVORITE + " = ?",
+                new String[] {String.valueOf("1")}, null, null, null, null);
+    }
+
+    public Cursor fetchFavorited(SQLiteDatabase readonlyDatabase, int feedId) {
+        return readonlyDatabase.query(true, getName(), null, COLUMN_FAVORITE + " = ? OR " + COLUMN_ID + " = ?",
+                new String[] {String.valueOf("1"), String.valueOf("feedId")}, null, null, null, null);
+    }
+
+    public Cursor fetchFeed(SQLiteDatabase readonlyDatabase, int feedId) {
+        return readonlyDatabase.query(true, getName(), null, COLUMN_RSS_FEED + " = ?",
+                new String[] {String.valueOf("feedId")}, null, null, null, null);
+    }
+
+    public Cursor fetchFeed(SQLiteDatabase readonlyDatabase, int feedId, int limit, int offset) {
+        return readonlyDatabase.query(true, getName(), null, COLUMN_RSS_FEED + " = ?",
+                new String[] {String.valueOf("feedId")}, null, null, null, offset + "," + limit);
+    }
 }

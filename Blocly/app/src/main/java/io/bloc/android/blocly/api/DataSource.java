@@ -40,6 +40,7 @@ public class DataSource {
                 rssFeedTable, rssItemTable);
         feeds = new ArrayList<RssFeed>();
         items = new ArrayList<RssItem>();
+        SQLiteDatabase writableDatabase = databaseOpenHelper.getWritableDatabase();
 
         new Thread(new Runnable() {
             @Override
