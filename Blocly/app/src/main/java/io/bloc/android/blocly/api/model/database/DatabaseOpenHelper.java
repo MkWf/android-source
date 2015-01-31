@@ -7,7 +7,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import io.bloc.android.blocly.api.model.database.table.Table;
 
 /**
- * Created by Mark on 1/19/2015.
+ * Created by Mark on 1/28/2015.
  */
 public class DatabaseOpenHelper extends SQLiteOpenHelper {
 
@@ -17,6 +17,7 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
     private Table[] tables;
 
     public DatabaseOpenHelper(Context context, Table... tables) {
+
         super(context, NAME, null, VERSION);
         this.tables = tables;
     }

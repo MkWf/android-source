@@ -5,7 +5,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 /**
- * Created by Mark on 1/19/2015.
+ * Created by Mark on 1/28/2015.
  */
 public class RssFeedTable extends Table {
 
@@ -60,6 +60,7 @@ public class RssFeedTable extends Table {
     }
 
     private static final String NAME = "rss_feeds";
+
     private static final String COLUMN_LINK = "link";
     private static final String COLUMN_TITLE = "title";
     private static final String COLUMN_DESCRIPTION = "description";

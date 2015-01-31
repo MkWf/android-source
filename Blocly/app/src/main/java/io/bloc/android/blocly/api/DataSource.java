@@ -24,7 +24,7 @@ import io.bloc.android.blocly.api.network.GetFeedsNetworkRequest;
 import io.bloc.android.blocly.api.network.NetworkRequest;
 
 /**
- * Created by Mark on 1/13/2015.
+ * Created by Mark on 1/27/2015.
  */
 public class DataSource {
 
@@ -44,15 +44,15 @@ public class DataSource {
         executorService = Executors.newSingleThreadExecutor();
         databaseOpenHelper = new DatabaseOpenHelper(BloclyApplication.getSharedInstance(),
                 rssFeedTable, rssItemTable);
-            if (BuildConfig.DEBUG && true) {
-                BloclyApplication.getSharedInstance().deleteDatabase("blocly_db");
-            }
+        if (BuildConfig.DEBUG && true) {
+            BloclyApplication.getSharedInstance().deleteDatabase("blocly_db");
+        }
     }
 
     public void fetchNewFeed(final String feedURL, final Callback<RssFeed> callback) {
         final Handler callbackThreadHandler = new Handler();
-        submitTask(new Runnable() {
 
+        submitTask(new Runnable() {
             @Override
             public void run() {
                 RssFeed fetchedFeed;
@@ -69,7 +69,6 @@ public class DataSource {
                     });
                     return;
                 }
-
                 GetFeedsNetworkRequest getFeedsNetworkRequest = new GetFeedsNetworkRequest(feedURL);
                 List<GetFeedsNetworkRequest.FeedResponse> feedResponses = getFeedsNetworkRequest.performRequest();
                 if (getFeedsNetworkRequest.getErrorCode() != 0) {
@@ -98,7 +97,6 @@ public class DataSource {
                         .setTitle(newFeedResponse.channelTitle)
                         .setDescription(newFeedResponse.channelDescription)
                         .insert(databaseOpenHelper.getWritableDatabase());
-
                 for (GetFeedsNetworkRequest.ItemResponse itemResponse : newFeedResponse.channelItems) {
                     long itemPubDate = System.currentTimeMillis();
                     DateFormat dateFormat = new SimpleDateFormat("EEE, dd MMM yyyy kk:mm:ss z", Locale.ENGLISH);
@@ -117,18 +115,18 @@ public class DataSource {
                             .setPubDate(itemPubDate)
                             .setRSSFeed(newFeedId)
                             .insert(databaseOpenHelper.getWritableDatabase());
-                    Cursor newFeedCursor = rssFeedTable.fetchRow(databaseOpenHelper.getReadableDatabase(), newFeedId);
-                    newFeedCursor.moveToFirst();
-                    fetchedFeed = feedFromCursor(newFeedCursor);
-                    newFeedCursor.close();
-                    final RssFeed finalFetchedFeed = fetchedFeed;
-                    callbackThreadHandler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            callback.onSuccess(finalFetchedFeed);
-                        }
-                    });
                 }
+                Cursor newFeedCursor = rssFeedTable.fetchRow(databaseOpenHelper.getReadableDatabase(), newFeedId);
+                newFeedCursor.moveToFirst();
+                fetchedFeed = feedFromCursor(newFeedCursor);
+                newFeedCursor.close();
+                final RssFeed finalFetchedFeed = fetchedFeed;
+                callbackThreadHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        callback.onSuccess(finalFetchedFeed);
+                    }
+                });
             }
         });
     }
@@ -158,13 +156,6 @@ public class DataSource {
         });
     }
 
-    void submitTask(Runnable task) {
-        if (executorService.isShutdown() || executorService.isTerminated()) {
-            executorService = Executors.newSingleThreadExecutor();
-        }
-        executorService.submit(task);
-    }
-
     static RssFeed feedFromCursor(Cursor cursor) {
         return new RssFeed(Table.getRowId(cursor), RssFeedTable.getTitle(cursor),
                 RssFeedTable.getDescription(cursor), RssFeedTable.getSiteURL(cursor),
@@ -178,4 +169,12 @@ public class DataSource {
                 RssItemTable.getPubDate(cursor), RssItemTable.getFavorite(cursor),
                 RssItemTable.getArchived(cursor));
     }
+
+    void submitTask(Runnable task) {
+        if (executorService.isShutdown() || executorService.isTerminated()) {
+            executorService = Executors.newSingleThreadExecutor();
+        }
+        executorService.submit(task);
+    }
 }
+

@@ -10,9 +10,8 @@ import com.nostra13.universalimageloader.core.assist.QueueProcessingType;
 
 import io.bloc.android.blocly.api.DataSource;
 
-
 /**
- * Created by Mark on 1/13/2015.
+ * Created by Mark on 1/27/2015.
  */
 public class BloclyApplication extends Application {
 
@@ -54,5 +53,4 @@ public class BloclyApplication extends Application {
     public DataSource getDataSource() {
         return dataSource;
     }
-
 }
