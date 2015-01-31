@@ -24,7 +24,7 @@ import io.bloc.android.blocly.api.model.RssFeed;
 import io.bloc.android.blocly.api.model.RssItem;
 
 /**
- * Created by Mark on 1/14/2015.
+ * Created by Mark on 1/27/2015.
  */
 public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemAdapterViewHolder> {
 
@@ -45,6 +45,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemAdapterVie
     private WeakReference<DataSource> dataSource;
     private int collapsedItemHeight;
     private int expandedItemHeight;
+
 
     @Override
     public ItemAdapterViewHolder onCreateViewHolder(ViewGroup viewGroup, int index) {
@@ -131,7 +132,6 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemAdapterVie
         TextView visitSite;
         RssItem rssItem;
 
-
         public ItemAdapterViewHolder(View itemView) {
             super(itemView);
             title = (TextView) itemView.findViewById(R.id.tv_rss_item_title);
@@ -144,12 +144,10 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemAdapterVie
             expandedContentWrapper = itemView.findViewById(R.id.ll_rss_item_expanded_content_wrapper);
             expandedContent = (TextView) expandedContentWrapper.findViewById(R.id.tv_rss_item_content_full);
             visitSite = (TextView) expandedContentWrapper.findViewById(R.id.tv_rss_item_visit_site);
-
             itemView.setOnClickListener(this);
-            visitSite.setOnClickListener(this);
-
             archiveCheckbox.setOnCheckedChangeListener(this);
             favoriteCheckbox.setOnCheckedChangeListener(this);
+            visitSite.setOnClickListener(this);
         }
 
         void update(RssFeed rssFeed, RssItem rssItem) {
@@ -166,12 +164,8 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemAdapterVie
                 headerWrapper.setVisibility(View.GONE);
             }
             animateContent(getExpandedItem() == rssItem);
-
         }
 
-        /*
-         * ImageLoadingListener
-         */
         @Override
         public void onLoadingStarted(String imageUri, View view) {}
 
@@ -194,9 +188,6 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemAdapterVie
             ImageLoader.getInstance().loadImage(imageUri, this);
         }
 
-        /*
-         * OnClickListener
-         */
         @Override
         public void onClick(View view) {
             if (view == itemView) {
@@ -210,16 +201,10 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemAdapterVie
             }
         }
 
-        /*
-         * OnCheckedChangedListener
-         */
+        @Override
         public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
             Log.v(TAG, "Checked changed to: " + isChecked);
         }
-
-        /*
-          * Private Methods
-          */
 
         private void animateContent(final boolean expand) {
             if ((expand && contentExpanded) || (!expand && !contentExpanded)) {

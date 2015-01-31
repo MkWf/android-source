@@ -4,7 +4,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 /**
- * Created by Mark on 1/19/2015.
+ * Created by Mark on 1/28/2015.
  */
 public abstract class Table {
 

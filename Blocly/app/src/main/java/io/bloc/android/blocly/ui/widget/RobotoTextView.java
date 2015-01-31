@@ -12,7 +12,7 @@ import java.util.Map;
 import io.bloc.android.blocly.R;
 
 /**
- * Created by Mark on 1/14/2015.
+ * Created by Mark on 1/27/2015.
  */
 public class RobotoTextView extends TextView {
 
@@ -57,5 +57,4 @@ public class RobotoTextView extends TextView {
         }
         setTypeface(robotoTypeface);
     }
-
 }

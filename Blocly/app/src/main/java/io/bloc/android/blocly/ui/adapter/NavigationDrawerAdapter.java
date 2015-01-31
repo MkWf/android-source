@@ -13,7 +13,7 @@ import io.bloc.android.blocly.R;
 import io.bloc.android.blocly.api.model.RssFeed;
 
 /**
- * Created by Mark on 1/18/2015.
+ * Created by Mark on 1/28/2015.
  */
 public class NavigationDrawerAdapter extends RecyclerView.Adapter<NavigationDrawerAdapter.ViewHolder> {
 
@@ -124,10 +124,6 @@ public class NavigationDrawerAdapter extends RecyclerView.Adapter<NavigationDraw
             }
         }
 
-         /*
-          * OnClickListener
-          */
-
         @Override
         public void onClick(View v) {
             if (getDelegate() == null) {
@@ -140,5 +136,7 @@ public class NavigationDrawerAdapter extends RecyclerView.Adapter<NavigationDraw
                 getDelegate().didSelectFeed(NavigationDrawerAdapter.this, rssFeed);
             }
         }
+
+
     }
 }

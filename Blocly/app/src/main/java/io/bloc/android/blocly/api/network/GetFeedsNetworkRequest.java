@@ -16,7 +16,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 /**
- * Created by Mark on 1/19/2015.
+ * Created by Mark on 1/28/2015.
  */
 public class GetFeedsNetworkRequest extends NetworkRequest<List<GetFeedsNetworkRequest.FeedResponse>> {
 
@@ -41,7 +41,6 @@ public class GetFeedsNetworkRequest extends NetworkRequest<List<GetFeedsNetworkR
     @Override
     public List<FeedResponse> performRequest() {
         List<FeedResponse> responseFeeds = new ArrayList<FeedResponse>(feedUrls.length);
-        int feedCount = 0;
         for (String feedUrlString : feedUrls) {
             InputStream inputStream = openStream(feedUrlString);
             if (inputStream == null) {
@@ -87,14 +86,12 @@ public class GetFeedsNetworkRequest extends NetworkRequest<List<GetFeedsNetworkR
                             itemGUID = tagNode.getTextContent();
                         }
                     }
-
                     responseItems.add(new ItemResponse(itemURL, itemTitle, itemDescription,
                             itemGUID, itemPubDate, itemEnclosureURL, itemEnclosureMIMEType));
                 }
-                responseFeeds.add(new FeedResponse(feedUrls[feedCount], channelTitle, channelURL,
-                        channelDescription, responseItems));
-                feedCount++;
-            }catch (IOException e) {
+                responseFeeds.add(new FeedResponse(feedUrlString, channelTitle, channelURL, channelDescription, responseItems));
+                inputStream.close();
+            } catch (IOException e) {
                 e.printStackTrace();
                 setErrorCode(ERROR_IO);
                 return null;
@@ -102,7 +99,7 @@ public class GetFeedsNetworkRequest extends NetworkRequest<List<GetFeedsNetworkR
                 e.printStackTrace();
                 setErrorCode(ERROR_PARSING);
                 return null;
-            }catch (ParserConfigurationException e) {
+            } catch (ParserConfigurationException e) {
                 e.printStackTrace();
                 setErrorCode(ERROR_PARSING);
                 return null;
@@ -157,5 +154,4 @@ public class GetFeedsNetworkRequest extends NetworkRequest<List<GetFeedsNetworkR
             this.itemEnclosureMIMEType = itemEnclosureMIMEType;
         }
     }
-
 }

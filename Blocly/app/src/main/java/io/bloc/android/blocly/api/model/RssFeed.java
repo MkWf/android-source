@@ -1,10 +1,9 @@
 package io.bloc.android.blocly.api.model;
 
 /**
- * Created by Mark on 1/13/2015.
+ * Created by Mark on 1/27/2015.
  */
 public class RssFeed extends Model {
-
     private String title;
     private String description;
     private String siteUrl;

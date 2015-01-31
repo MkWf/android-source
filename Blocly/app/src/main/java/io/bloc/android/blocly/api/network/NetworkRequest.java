@@ -6,7 +6,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 /**
- * Created by Mark on 1/19/2015.
+ * Created by Mark on 1/28/2015.
  */
 public abstract class NetworkRequest<Result> {
 
