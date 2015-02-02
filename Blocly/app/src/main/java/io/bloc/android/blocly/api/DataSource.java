@@ -71,23 +71,7 @@ public class DataSource {
                 }
                 GetFeedsNetworkRequest getFeedsNetworkRequest = new GetFeedsNetworkRequest(feedURL);
                 List<GetFeedsNetworkRequest.FeedResponse> feedResponses = getFeedsNetworkRequest.performRequest();
-                if (getFeedsNetworkRequest.getErrorCode() != 0) {
-                    final String errorMessage;
-                    if (getFeedsNetworkRequest.getErrorCode() == NetworkRequest.ERROR_IO) {
-                        errorMessage = "Network error";
-                    } else if (getFeedsNetworkRequest.getErrorCode() == NetworkRequest.ERROR_MALFORMED_URL) {
-                        errorMessage = "Malformed URL error";
-                    } else if (getFeedsNetworkRequest.getErrorCode() == GetFeedsNetworkRequest.ERROR_PARSING) {
-                        errorMessage = "Error parsing feed";
-                    } else {
-                        errorMessage = "Error unknown";
-                    }
-                    callbackThreadHandler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            callback.onError(errorMessage);
-                        }
-                    });
+                if (checkForError(getFeedsNetworkRequest, callbackThreadHandler, callback)) {
                     return;
                 }
                 GetFeedsNetworkRequest.FeedResponse newFeedResponse = feedResponses.get(0);
@@ -98,23 +82,7 @@ public class DataSource {
                         .setDescription(newFeedResponse.channelDescription)
                         .insert(databaseOpenHelper.getWritableDatabase());
                 for (GetFeedsNetworkRequest.ItemResponse itemResponse : newFeedResponse.channelItems) {
-                    long itemPubDate = System.currentTimeMillis();
-                    DateFormat dateFormat = new SimpleDateFormat("EEE, dd MMM yyyy kk:mm:ss z", Locale.ENGLISH);
-                    try {
-                        itemPubDate = dateFormat.parse(itemResponse.itemPubDate).getTime();
-                    } catch (ParseException e) {
-                        e.printStackTrace();
-                    }
-                    new RssItemTable.Builder()
-                            .setTitle(itemResponse.itemTitle)
-                            .setDescription(itemResponse.itemDescription)
-                            .setEnclosure(itemResponse.itemEnclosureURL)
-                            .setMIMEType(itemResponse.itemEnclosureMIMEType)
-                            .setLink(itemResponse.itemURL)
-                            .setGUID(itemResponse.itemGUID)
-                            .setPubDate(itemPubDate)
-                            .setRSSFeed(newFeedId)
-                            .insert(databaseOpenHelper.getWritableDatabase());
+                    insertResponseToDatabase(newFeedId, itemResponse);
                     Cursor newFeedCursor = rssFeedTable.fetchRow(databaseOpenHelper.getReadableDatabase(), newFeedId);
                     newFeedCursor.moveToFirst();
                     fetchedFeed = feedFromCursor(newFeedCursor);
@@ -175,6 +143,48 @@ public class DataSource {
             executorService = Executors.newSingleThreadExecutor();
         }
         executorService.submit(task);
+    }
+
+    boolean checkForError(GetFeedsNetworkRequest getFeedsNetworkRequest, Handler callbackThreadHandler, final Callback<?> callback) {
+        if (getFeedsNetworkRequest.getErrorCode() != 0) {
+            final String errorMessage;
+            if (getFeedsNetworkRequest.getErrorCode() == NetworkRequest.ERROR_IO) {
+                errorMessage = "Network error";
+            } else if (getFeedsNetworkRequest.getErrorCode() == NetworkRequest.ERROR_MALFORMED_URL) {
+                errorMessage = "Malformed URL error";
+            } else if (getFeedsNetworkRequest.getErrorCode() == GetFeedsNetworkRequest.ERROR_PARSING) {
+                errorMessage = "Error parsing feed";
+            } else {
+                errorMessage = "Error unknown";
+            }
+            callbackThreadHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    callback.onError(errorMessage);
+                }
+            });
+        }
+        return getFeedsNetworkRequest.getErrorCode() != 0;
+    }
+
+    long insertResponseToDatabase(long feedId, GetFeedsNetworkRequest.ItemResponse itemResponse) {
+        long itemPubDate = System.currentTimeMillis();
+        DateFormat dateFormat = new SimpleDateFormat("EEE, dd MMM yyyy kk:mm:ss z", Locale.ENGLISH);
+        try {
+            itemPubDate = dateFormat.parse(itemResponse.itemPubDate).getTime();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return new RssItemTable.Builder()
+                .setTitle(itemResponse.itemTitle)
+                .setDescription(itemResponse.itemDescription)
+                .setEnclosure(itemResponse.itemEnclosureURL)
+                .setMIMEType(itemResponse.itemEnclosureMIMEType)
+                .setLink(itemResponse.itemURL)
+                .setGUID(itemResponse.itemGUID)
+                .setPubDate(itemPubDate)
+                .setRSSFeed(feedId)
+                .insert(databaseOpenHelper.getWritableDatabase());
     }
 }
 
