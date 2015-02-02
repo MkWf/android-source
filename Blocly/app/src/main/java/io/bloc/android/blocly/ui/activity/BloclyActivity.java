@@ -1,6 +1,7 @@
 package io.bloc.android.blocly.ui.activity;
 
 import android.animation.ValueAnimator;
+import android.app.Fragment;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.drawable.Drawable;
@@ -13,6 +14,7 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -45,6 +47,7 @@ public class BloclyActivity extends ActionBarActivity implements
     private View overflowButton;
     private List<RssFeed> allFeeds = new ArrayList<RssFeed>();
     private RssItem expandedItem = null;
+    private String activeFeed = "AndroidCentral";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -144,12 +147,12 @@ public class BloclyActivity extends ActionBarActivity implements
                 navigationDrawerAdapter.notifyDataSetChanged();
                 getFragmentManager()
                         .beginTransaction()
-                        .add(R.id.fl_activity_blocly, RssItemListFragment.fragmentForRssFeed(rssFeeds.get(0)))
+                        .add(R.id.fl_activity_blocly, RssItemListFragment.fragmentForRssFeed(rssFeeds.get(0)), rssFeeds.get(0).getTitle())
                         .commit();
             }
-
             @Override
             public void onError(String errorMessage) {}
+
         });
     }
 
@@ -202,9 +205,38 @@ public class BloclyActivity extends ActionBarActivity implements
     }
 
     @Override
+    public void onBackPressed() {
+       // Log.i(getClass().getSimpleName(), Integer.toString(getSupportFragmentManager().getBackStackEntryCount()));
+        getFragmentManager().popBackStack();
+        if(getFragmentManager().getBackStackEntryCount() <= 0){
+            super.onBackPressed();
+        }
+    }
+
+    @Override
     public void didSelectFeed(NavigationDrawerAdapter adapter, RssFeed rssFeed) {
+
+        Fragment feed = getFragmentManager().findFragmentByTag(rssFeed.getTitle());
+
+        if(activeFeed == rssFeed.getTitle()){
+            //DO NOTHING
+        }else if(feed == null){
+            getFragmentManager()
+                    .beginTransaction()
+                    .hide(getFragmentManager().findFragmentByTag(activeFeed))
+                    .addToBackStack(activeFeed)
+                    .add(R.id.fl_activity_blocly, RssItemListFragment.fragmentForRssFeed(rssFeed), rssFeed.getTitle())
+                    .commit();
+            Log.i(getClass().getSimpleName(), Integer.toString(getSupportFragmentManager().getBackStackEntryCount()));
+        }else if(feed.isAdded() && feed.isHidden()) {
+            getFragmentManager()
+                    .beginTransaction()
+                    .hide(getFragmentManager().findFragmentByTag(activeFeed))
+                    .show(feed)
+                    .commit();
+        }
         drawerLayout.closeDrawers();
-        Toast.makeText(this, "Show RSS items from " + rssFeed.getTitle(), Toast.LENGTH_SHORT).show();
+        activeFeed = rssFeed.getTitle();
     }
 
     @Override
