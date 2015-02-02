@@ -1,6 +1,7 @@
 package io.bloc.android.blocly.api;
 
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Handler;
 
 import java.text.DateFormat;
@@ -46,7 +47,108 @@ public class DataSource {
                 rssFeedTable, rssItemTable);
         if (BuildConfig.DEBUG && true) {
             BloclyApplication.getSharedInstance().deleteDatabase("blocly_db");
+            SQLiteDatabase writableDatabase = databaseOpenHelper.getWritableDatabase();
+            new RssFeedTable.Builder()
+                    .setTitle("AndroidCentral")
+                    .setDescription("AndroidCentral - Android News, Tips, and stuff!")
+                    .setSiteURL("http://www.androidcentral.com")
+                    .setFeedURL("http://feeds.feedburner.com/androidcentral?format=xml")
+                    .insert(writableDatabase);
+            new RssFeedTable.Builder()
+                    .setTitle("IGN")
+                    .setDescription("IGN All")
+                    .setSiteURL("http://www.ign.com")
+                    .setFeedURL("http://feeds.ign.com/ign/all?format=xml")
+                    .insert(writableDatabase);
+            new RssFeedTable.Builder()
+                    .setTitle("Kotaku")
+                    .setDescription("Game news, reviews, and awesomeness")
+                    .setSiteURL("http://kotaku.com")
+                    .setFeedURL("http://feeds.gawker.com/kotaku/full#_ga=1.41426146.1734638996.1420673722")
+                    .insert(writableDatabase);
         }
+    }
+
+    public void fetchFeedWithId(final long rowId, final Callback<RssFeed> callback) {
+        final Handler callbackThreadHandler = new Handler();
+        submitTask(new Runnable() {
+            @Override
+            public void run() {
+                Cursor cursor = rssFeedTable.fetchRow(databaseOpenHelper.getReadableDatabase(), rowId);
+                if (cursor.moveToFirst()) {
+                    final RssFeed rssFeed = feedFromCursor(cursor);
+                    cursor.close();
+                    callbackThreadHandler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            callback.onSuccess(rssFeed);
+                        }
+                    });
+                } else {
+                    callbackThreadHandler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            callback.onError("RSS feed not found for row Id (" + rowId + ")");
+                        }
+                    });
+                }
+            }
+        });
+    }
+
+    public void fetchAllFeeds(final Callback<List<RssFeed>> callback) {
+        final Handler callbackThreadHandler = new Handler();
+        submitTask(new Runnable() {
+            @Override
+            public void run() {
+                final List<RssFeed> resultFeeds = new ArrayList<RssFeed>();
+                Cursor cursor = RssFeedTable.fetchAllFeeds(databaseOpenHelper.getReadableDatabase());
+                if (cursor.moveToFirst()) {
+                    do {
+                        resultFeeds.add(feedFromCursor(cursor));
+                    } while (cursor.moveToNext());
+                    cursor.close();
+                }
+                callbackThreadHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        callback.onSuccess(resultFeeds);
+                    }
+                });
+            }
+        });
+    }
+
+    public void fetchNewItemsForFeed(final RssFeed rssFeed, final Callback<List<RssItem>> callback) {
+        final Handler callbackThreadHandler = new Handler();
+        submitTask(new Runnable() {
+            @Override
+            public void run() {
+                GetFeedsNetworkRequest getFeedsNetworkRequest = new GetFeedsNetworkRequest(rssFeed.getFeedUrl());
+                final List<RssItem> newItems = new ArrayList<RssItem>();
+                List<GetFeedsNetworkRequest.FeedResponse> feedResponses = getFeedsNetworkRequest.performRequest();
+                if (checkForError(getFeedsNetworkRequest, callbackThreadHandler, callback)) {
+                    return;
+                }
+                GetFeedsNetworkRequest.FeedResponse feedResponse = feedResponses.get(0);
+                for (GetFeedsNetworkRequest.ItemResponse itemResponse : feedResponse.channelItems) {
+                    if (RssItemTable.hasItem(databaseOpenHelper.getReadableDatabase(), itemResponse.itemGUID)) {
+                        continue;
+                    }
+                    long newItemRowId = insertResponseToDatabase(rssFeed.getRowId(), itemResponse);
+                    Cursor newItemCursor = rssItemTable.fetchRow(databaseOpenHelper.getReadableDatabase(), newItemRowId);
+                    newItemCursor.moveToFirst();
+                    newItems.add(itemFromCursor(newItemCursor));
+                    newItemCursor.close();
+                }
+                callbackThreadHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        callback.onSuccess(newItems);
+                    }
+                });
+            }
+        });
     }
 
     public void fetchNewFeed(final String feedURL, final Callback<RssFeed> callback) {
@@ -83,18 +185,18 @@ public class DataSource {
                         .insert(databaseOpenHelper.getWritableDatabase());
                 for (GetFeedsNetworkRequest.ItemResponse itemResponse : newFeedResponse.channelItems) {
                     insertResponseToDatabase(newFeedId, itemResponse);
-                    Cursor newFeedCursor = rssFeedTable.fetchRow(databaseOpenHelper.getReadableDatabase(), newFeedId);
-                    newFeedCursor.moveToFirst();
-                    fetchedFeed = feedFromCursor(newFeedCursor);
-                    newFeedCursor.close();
-                    final RssFeed finalFetchedFeed = fetchedFeed;
-                    callbackThreadHandler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            callback.onSuccess(finalFetchedFeed);
-                        }
-                    });
                 }
+                Cursor newFeedCursor = rssFeedTable.fetchRow(databaseOpenHelper.getReadableDatabase(), newFeedId);
+                newFeedCursor.moveToFirst();
+                fetchedFeed = feedFromCursor(newFeedCursor);
+                newFeedCursor.close();
+                final RssFeed finalFetchedFeed = fetchedFeed;
+                callbackThreadHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        callback.onSuccess(finalFetchedFeed);
+                    }
+                });
             }
         });
     }
